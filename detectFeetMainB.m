@@ -1,7 +1,7 @@
 function [imagemFinal] = detectFeetMain(original,depth)
 figure;
 imgSize = size(depth);
-depthCrop = depth(imgSize(1)/4-20 :imgSize(1)*3/4-50,imgSize(2)*3/8 :imgSize(2)*5/8);
+depthCrop = depth(imgSize(1)/4+50 :imgSize(1)*3/4-50,imgSize(2)*3/8+30 :imgSize(2)*5/8+10);
 subplot(1,2,1);
 imshow(mat2gray(depthCrop));
 title('Imagem depth já recortada');
@@ -15,7 +15,7 @@ newImage = controloMorfologico(newImage);
 figure;
 imshow(original); hold on;
 imgSize = size(original);
-padding = [imgSize(1)/4-20, imgSize(2)*3/8];
+padding = [imgSize(1)/4+50, imgSize(2)*3/8+30];
 
 
 [B,L,N] = bwboundaries(newImage);
