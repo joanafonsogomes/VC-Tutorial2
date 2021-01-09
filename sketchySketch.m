@@ -31,8 +31,10 @@ subplot(2,2,1),imshow(threshedImg)
 subplot(2,2,2),imshow(threshedDepth)
 subplot(2,2,3) ,imshow(normalDepth)
 subplot(2,2,4) ,imshow(closed)
+%}
 %%%%%% DANGER : VERY SLOW
 figure
+
 for i=0:59
 normalDepth=imclose(mat2gray(imfilter(depthArray(:,:,i+1),gaussKernel)),se);
 normalDepth=normalDepth(imgSize(1)/4 :imgSize(1)*3/4,imgSize(2)*3/8 :imgSize(2)*5/8);
