@@ -1,5 +1,6 @@
-function [imagemFinal] = detectFeetMainB(original,depth)
-figure;
+function [imagemFinal] = detectFeetMainB(original,depth,i)
+fig = figure('visible', 'off');
+
 imgSize = size(depth);
 depthCrop = depth(imgSize(1)/4 :imgSize(1)*3/4,imgSize(2)*3/8 :imgSize(2)*5/8);
 subplot(1,2,1);
@@ -9,10 +10,13 @@ newImage = removeBackground(depthCrop);
 subplot(1,2,2);
 imshow(mat2gray(newImage));
 title('Remoção do chão e pernas');
+saveas(fig,strcat('output/recorte_',int2str(i),'.jpg'));
+close(fig);
 
-newImage = controloMorfologico(newImage);
 
-figure;
+newImage = controloMorfologico(newImage,i);
+
+fig = figure('visible', 'off');
 imshow(original); hold on;
 imgSize = size(original);
 padding = [imgSize(1)/4, imgSize(2)*3/8];
@@ -39,7 +43,8 @@ plot(ponta_direita(2),ponta_direita(1),'s');
 [~,indice] = max(right(:,1));
 tornozelo_direito = right(indice,:);
 plot(tornozelo_direito(2),tornozelo_direito(1),'s');
-
+saveas(fig,strcat('output/final_',int2str(i),'.jpg'));
+close(fig);
 
 
 imagemFinal = newImage;
@@ -54,7 +59,7 @@ end
 
 deltaD = mean(delta);
 newImage = depthCrop;
-mean(depthCrop(sizeCropX-1,:))
+mean(depthCrop(sizeCropX-1,:));
 for i=1:sizeCropX
     k = sizeCropX - i +1;
     dmax = (i)*deltaD + mean(depthCrop(sizeCropX,:));
@@ -64,7 +69,7 @@ for i=1:sizeCropX
             newImage(k,j)=0;
         end
     end
-
+    deltaD=deltaD + 0.003;
 end
 
 noBackground = newImage;
@@ -72,8 +77,8 @@ noBackground = newImage;
 end
 
 
-function extracao = controloMorfologico(newImage)
-figure;
+function extracao = controloMorfologico(newImage,i)
+fig = figure('visible', 'off');
 %erode para apagar as linhas no canto inferior direito
 se=strel('disk',2,6);
 %se = strel('square', 5)
@@ -82,32 +87,27 @@ subplot(1,4,1);
 imshow(mat2gray(newImage));
 title('Erode');
 
-se=strel('disk',15,0);
+se=strel('disk',8,0);
+%se=strel([0 1 0;1 1 1;0 1 0]);
+subplot(1,4,2);
+newImage=imopen(newImage,se);
+imshow(mat2gray(newImage));
+title('Open');
+
+se=strel('disk',2,6);
 %se=strel('line',5,90);
 newImage=imclose(newImage,se);
-subplot(1,4,2);
+subplot(1,4,3);
 imshow(mat2gray(newImage));
 title('Close');
 %
 se=strel('disk',2,6);
 newImage=imdilate(newImage,se);
-subplot(1,4,3);
-imshow(mat2gray(newImage));
-title('Dilate');
-%
-se=strel('disk',2,0);
-%se = strel('square', 5)
-newImage = imerode(newImage, se);
-newImage = imerode(newImage, se);
-newImage = imerode(newImage, se);
-newImage = imerode(newImage, se);
-newImage=imdilate(newImage,se);
-newImage=imdilate(newImage,se);
-newImage=imdilate(newImage,se);
-newImage=imdilate(newImage,se);
 subplot(1,4,4);
 imshow(mat2gray(newImage));
-title('4xErode - 4xdilate');
+title('Dilate');
+saveas(fig,strcat('output/CtrMorf_',int2str(i),'.jpg'));
+close(fig);
 extracao = newImage;
 end
 
