@@ -1,7 +1,7 @@
-function [imagemFinal] = detectFeetMain(original,depth)
+function [imagemFinal] = detectFeetMainB(original,depth)
 figure;
 imgSize = size(depth);
-depthCrop = depth(imgSize(1)/4+50 :imgSize(1)*3/4-50,imgSize(2)*3/8+30 :imgSize(2)*5/8+10);
+depthCrop = depth(imgSize(1)/4 :imgSize(1)*3/4,imgSize(2)*3/8 :imgSize(2)*5/8);
 subplot(1,2,1);
 imshow(mat2gray(depthCrop));
 title('Imagem depth já recortada');
@@ -15,10 +15,10 @@ newImage = controloMorfologico(newImage);
 figure;
 imshow(original); hold on;
 imgSize = size(original);
-padding = [imgSize(1)/4+50, imgSize(2)*3/8+30];
+padding = [imgSize(1)/4, imgSize(2)*3/8];
 
 
-[B,L,N] = bwboundaries(newImage);
+[B,~,~] = bwboundaries(newImage);
 left = B{1} + padding;
 plot(left(:,2), left(:,1), 'g','LineWidth',1);
 right = B{2} + padding;
@@ -48,7 +48,7 @@ end
 
 function noBackground = removeBackground(depthCrop)
 [sizeCropX,sizeCropY] = size(depthCrop);
-for i = 0:5
+for i = 0:20
     delta(i+1) = mean(depthCrop(sizeCropX-(i+1),:))- mean(depthCrop(sizeCropX-i,:));
 end
 
@@ -88,13 +88,13 @@ newImage=imclose(newImage,se);
 subplot(1,4,2);
 imshow(mat2gray(newImage));
 title('Close');
-%%
+%
 se=strel('disk',2,6);
 newImage=imdilate(newImage,se);
 subplot(1,4,3);
 imshow(mat2gray(newImage));
 title('Dilate');
-%%
+%
 se=strel('disk',2,0);
 %se = strel('square', 5)
 newImage = imerode(newImage, se);
