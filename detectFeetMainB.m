@@ -47,7 +47,6 @@ end
 
 deltaD = mean(delta);
 newImage = depthCrop;
-mean(depthCrop(sizeCropX-1,:));
 for i=1:sizeCropX
     k = sizeCropX - i +1;
     dmax = (i)*deltaD + mean(depthCrop(sizeCropX,:));
