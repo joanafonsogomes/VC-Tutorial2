@@ -1,20 +1,8 @@
-function [imagemFinal] = detectFeetMainB(original,depth,i)
-fig = figure('visible', 'off');
-
+function [imagemFinal] = detectFeetMainB(original,depth,v)
 imgSize = size(depth);
 depthCrop = depth(imgSize(1)/4 :imgSize(1)*3/4,imgSize(2)*3/8 :imgSize(2)*5/8);
-subplot(1,2,1);
-imshow(mat2gray(depthCrop));
-title('Imagem depth já recortada');
 newImage = removeBackground(depthCrop);
-subplot(1,2,2);
-imshow(mat2gray(newImage));
-title('Remoção do chão e pernas');
-saveas(fig,strcat('output/recorte_',int2str(i),'.jpg'));
-close(fig);
-
-
-newImage = controloMorfologico(newImage,i);
+newImage = controloMorfologico(newImage);
 
 fig = figure('visible', 'off');
 imshow(original); hold on;
@@ -43,7 +31,7 @@ plot(ponta_direita(2),ponta_direita(1),'s');
 [~,indice] = max(right(:,1));
 tornozelo_direito = right(indice,:);
 plot(tornozelo_direito(2),tornozelo_direito(1),'s');
-saveas(fig,strcat('output/final_',int2str(i),'.jpg'));
+writeVideo(v,getframe(fig));
 close(fig);
 
 
@@ -77,37 +65,24 @@ noBackground = newImage;
 end
 
 
-function extracao = controloMorfologico(newImage,i)
-fig = figure('visible', 'off');
+function extracao = controloMorfologico(newImage)
+
 %erode para apagar as linhas no canto inferior direito
 se=strel('disk',2,6);
-%se = strel('square', 5)
 newImage = imerode(newImage, se);
-subplot(1,4,1);
-imshow(mat2gray(newImage));
-title('Erode');
+
 
 se=strel('disk',8,0);
-%se=strel([0 1 0;1 1 1;0 1 0]);
-subplot(1,4,2);
 newImage=imopen(newImage,se);
-imshow(mat2gray(newImage));
-title('Open');
+
 
 se=strel('disk',2,6);
 %se=strel('line',5,90);
 newImage=imclose(newImage,se);
-subplot(1,4,3);
-imshow(mat2gray(newImage));
-title('Close');
 %
 se=strel('disk',2,6);
 newImage=imdilate(newImage,se);
-subplot(1,4,4);
-imshow(mat2gray(newImage));
-title('Dilate');
-saveas(fig,strcat('output/CtrMorf_',int2str(i),'.jpg'));
-close(fig);
+
 extracao = newImage;
 end
 
