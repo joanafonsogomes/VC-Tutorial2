@@ -1,5 +1,17 @@
-%% carregar imagens depth
-depth = imread("gait/gait_depth_oneimage.png");
-color = imread("gait/gait_RGB_oneimage.png");
+%carregar imagens depth
+%depthArray= ones(141,141,60,'uint16');
+RGB = VideoReader("gait/gait_groundtruth_RGB_60frames.avi");
 
-imagemFinal = detectFeetMain(rgb2gray(color),depth);
+v = VideoWriter('newfile.avi','Motion JPEG AVI');
+v.Quality = 95;
+v.FrameRate = 30;
+open(v);
+
+for i=1:59
+    frame = read(RGB,i);
+    depth=imread("gait\gait_depth\gait_depth_60frames_" +(i-1)+".png");
+    detectFeetMain(rgb2gray(frame),depth,v);
+end
+
+close(v);
+
