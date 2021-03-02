@@ -1,4 +1,4 @@
-# Tutorial 2
+# VC Tutorial 2
 
 ### Image Recognition
 
